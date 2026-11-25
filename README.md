@@ -1,5 +1,5 @@
 # Ex-3-RECOGNITION-OF-A-VALID-ARITHMETIC-EXPRESSION-THAT-USES-OPERATOR-AND-USING-YACC
-# Date:
+
 # AIM
 To write a yacc program to recognize a valid arithmetic expression that uses operator +,- ,* and /.
 # ALGORITHM
@@ -12,6 +12,97 @@ To write a yacc program to recognize a valid arithmetic expression that uses ope
 7.	Compile these with the C compiler as gcc lex.yy.c y.tab.c
 8.	Enter an arithmetic expression as input and the tokens are identified as output.
 # PROGRAM
+## exp3_0283.l file:
+```
+%{
+#include "y.tab.h"
+#include <stdio.h>
+%}
+
+%%
+
+[0-9]+                  { return NUMBER; }
+[a-zA-Z][a-zA-Z0-9]*    { return ID; }
+
+"+"                     { return '+'; }
+"-"                     { return '-'; }
+"*"                     { return '*'; }
+"/"                     { return '/'; }
+"("                     { return '('; }
+")"                     { return ')'; }
+"="                     { return '='; }
+
+[ \t]+                  ;
+
+\n                      { return 0; }
+
+.                       { return yytext[0]; }
+
+%%
+
+int yywrap()
+{
+    return 1;
+}
+```
+## exp3_0283.y:
+```
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+int yylex(void);
+void yyerror(const char *s);
+%}
+
+%token NUMBER ID
+
+%%
+
+statement:
+        expr '=' expr
+      | expr
+        ;
+
+expr:
+        expr '+' term
+      | expr '-' term
+      | term
+      ;
+
+term:
+        term '*' factor
+      | term '/' factor
+      | factor
+      ;
+
+factor:
+        '(' expr ')'
+      | NUMBER
+      | ID
+      ;
+
+%%
+
+int main()
+{
+    printf("Enter Expression:\n");
+
+    if (yyparse() == 0)
+        printf("\nValid Arithmetic Expression\n");
+    else
+        printf("\nInvalid Arithmetic Expression\n");
+
+    return 0;
+}
+
+void yyerror(const char *s)
+{
+}
+```
 # OUTPUT
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/e6687df7-dafc-42be-898c-cb7b0af964a0" />
+
 # RESULT
 A YACC program to recognize a valid arithmetic expression that uses operator +,-,* and / is executed successfully and the output is verified.
